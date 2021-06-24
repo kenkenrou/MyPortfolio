@@ -5,22 +5,22 @@ from pixivpy3 import *
 from time import sleep
 import os
 
-# Enter the Illustrator-Id
+
 #FollowUserList = [<ダウンロードする絵師のID>, xxx, xxx]
 FollowUserList = [177784, 1203800]
 
-# regarding refresh token, please refer to <https://qiita.com/yuki_2020/items/759e639a4cecc0770758>
+#右記参照 <https://qiita.com/yuki_2020/items/759e639a4cecc0770758>
 REFRESH_TOKEN = "xxxxxxxxxxxx"
 
 
 for id_search in FollowUserList:
 
-    # Log in to pixiv
+    # pixivへログイン
     api = PixivAPI()
     api.auth(refresh_token=REFRESH_TOKEN)
     aapi = AppPixivAPI()
 
-    # Maximum number of illustrations
+    # イラストの最大数(適宜編集してください)
     works=300
 
     illustrator_id = api.users_works(id_search, per_page=works)
@@ -38,8 +38,7 @@ for id_search in FollowUserList:
     # Filter by tag
     target_tag = []  # e.g. target_tag = ["Fate/GrandOrder","FGO","FateGO","Fate/staynight"]
 
-    # Designation of download destination
-
+    # Downloadパスの生成
     # デフォルトでは絵師の名前でフォルダが作成される
     saving_direcory_path = "./pixiv_images/" + illust.user.name + "_" + str(id_search) + "/"
     if not os.path.exists(saving_direcory_path):
@@ -47,7 +46,7 @@ for id_search in FollowUserList:
         os.mkdir(saving_direcory_path)
     separator = "------------------------------------------------------------"
 
-    #Display information of illustrator and illustrations
+    #コンソールに出力 illustrator, illustrations
     print("Illustrator: {}".format(illust.user.name))
     print("Works number: {}".format(total_works))
     print(separator)
@@ -69,7 +68,7 @@ for id_search in FollowUserList:
             sleep(1)
             continue
 
-        # illustrations with more than one picture
+        # イラストが1枚より多い時
         if illust.is_manga:
             work_info = api.works(illust.id)
 
@@ -77,7 +76,8 @@ for id_search in FollowUserList:
                 page_info = work_info.response[0].metadata.pages[page_no]
                 aapi.download(page_info.image_urls.large, saving_direcory_path)
                 sleep(3)
-        # illustrations with only one picture
+                
+        # イラストが1枚の時
         else:
             aapi.download(illust.image_urls.large, saving_direcory_path)
             sleep(3)

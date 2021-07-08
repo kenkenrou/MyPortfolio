@@ -78,10 +78,10 @@ for picture_name in picture_data:
             x_left = x+w//6
             x_right = x+w-w//6
 
-            face_image_2 = image[y_top : y_bottom, x_left : x_right]
-            temp_2 = picture_name + "_" + str(i) + '_2.jpg'
-            output_path_2 = os.path.join(faces_output_dir, temp_2)
-            cv2.imwrite(output_path_2, face_image_2)
+            face_image = image[y_top : y_bottom, x_left : x_right]
+            temp = picture_name + "_" + str(i) + '.jpg'
+            output_path = os.path.join(faces_output_dir, temp)
+            cv2.imwrite(output_path, face_image)
 
 
         # cv2.imwrite('face.jpg', image) # 元画像

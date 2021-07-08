@@ -1,4 +1,4 @@
-﻿import os
+import os
 import cv2
 import glob
 
@@ -27,12 +27,15 @@ non_face_output_dir = "non_face"
 
 picture_datapath = glob.glob(referent_path + "/*")  # referent_path下にある参照するデータリストのパス
 picture_data = list_replace(picture_datapath, referent_path + "\\", "")  # referent_path下にある参照するデータリスト
+# picture_datapath = "./OrigPicData\\74060_p0.png"
+# picture_data = "74060_p0.png"
 
 
 # フォルダ内にはJPEGとPNG以外置かないでください
 # 顔の検出
 for picture_name in picture_data:
 
+    # picture_name = "sample.jpg"
     image = cv2.imread(referent_path + "/" + picture_name) # 画像読み込み(gifは非対応)
 
     picture_name = picture_name.replace(".jpg", "")
@@ -60,19 +63,29 @@ for picture_name in picture_data:
 
         for i, (x, y, w, h) in enumerate(faces):
             # 一人ずつ顔を切り抜く
-            face_image = image[y:y + h, x:x + w]
+
+            '''
+            # OpenCVで検出したものそのまま
+            face_image = image[y : y+h, x : x+w]
             temp = picture_name + "_" + str(i) + '.jpg'
             output_path = os.path.join(faces_output_dir, temp)
             cv2.imwrite(output_path, face_image)
+            '''
+
+            # トリミング
+            y_top = y+h//6
+            y_bottom = y+h-h//6
+            x_left = x+w//6
+            x_right = x+w-w//6
+
+            face_image_2 = image[y_top : y_bottom, x_left : x_right]
+            temp_2 = picture_name + "_" + str(i) + '_2.jpg'
+            output_path_2 = os.path.join(faces_output_dir, temp_2)
+            cv2.imwrite(output_path_2, face_image_2)
+
 
         # cv2.imwrite('face.jpg', image) # 元画像
-        """
-        for x, y, w, h in faces:
-            # 四角を描く
-            cv2.rectangle(image, (x, y), (x + w, y + h), color=(0, 0, 255), thickness=3)
 
-        cv2.imwrite('faces.jpg', image) # 矩形で囲った画像
-        """
     print("finish this picture named %s" % picture_name)
 
 print("That's all.")
